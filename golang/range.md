@@ -14,3 +14,23 @@
 	}
 	fmt.Println(a)    //输出[100, 101, 102]
 ```
+
+
+## 场景二 range引用结构的数据的时候 不会复制底层数据
+
+```golang
+	s := []{1, 2, 3, 4, 5}
+
+	for i, v := range s {    //复制struct slice {pointer, len, cap}
+		if i == 0 {
+			s = s[:3]     //对slice的修改，不会影响range
+		}
+		fmt.Ptintln(i, v)
+	}
+	0 1
+	1 2
+	2 100
+	3 4
+	4 5
+```
+
