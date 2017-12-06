@@ -24,6 +24,7 @@
 	for i, v := range s {    //复制struct slice {pointer, len, cap}
 		if i == 0 {
 			s = s[:3]     //对slice的修改，不会影响range
+			s[2] = 100
 		}
 		fmt.Ptintln(i, v)
 	}
