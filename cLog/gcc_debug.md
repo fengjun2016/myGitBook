@@ -1,7 +1,8 @@
 # gcc linux 下手动debug命令总结
 
 > 测试程序如下所示
-  ``` #include<stdio.h>
+  ``` c 
+  #include<stdio.h>
   int main(){
   	struct _s{
 		char a;
@@ -19,7 +20,8 @@
   	s.f = &s.a;
   	printf("size of struct s is %d\n", sizeof(s));
 	return 0;
-  ``` }
+  }
+  ```
 ## 带gdb模式下的手动命令调试
 > gcc test.c -g -o test
 
