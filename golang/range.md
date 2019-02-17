@@ -35,3 +35,51 @@
 	4 5
 ```
 
+## 场景三 range在循环遍历输出chan c类型的时候 注意c为nil的时候仍然也会进行遍历输出 除非手动close掉c close(c)
+
+```golang
+	package main
+
+	import (
+		"fmt"
+		"time"
+	)
+
+	var message = make(chan string, 3) //FIFO先进先出
+
+	func sample() {
+		message <- "hello gorutine1!"
+		message <- "hello gorutine2!"
+		message <- "hello gorutine3!"
+		message <- "hello gorutine4!"
+	}
+
+	func sample2() {
+		time.Sleep(2 * time.Second)
+		str := <-message
+		str = str + "I'm gorutine"
+		message <- str
+		//close(message)
+	}
+	func main() {
+		go sample()
+		go sample2()
+		time.Sleep(3 * time.Second)
+		for str := range message {
+			fmt.Println(str)
+		}
+		fmt.Println("Hello World!")
+	}
+	hello gorutine2!
+	hello gorutine3!
+	hello gorutine4!
+	hello gorutine1!I'm gorutine
+	
+	fatal error: all goroutines are asleep - deadlock!
+	
+	goroutine 1 [chan receive]:
+	main.main()
+		/Users/fengjun/workspace/go_workspace/go_mooc/test.go:28 +0x123
+	
+	exit status 2
+```
