@@ -35,7 +35,7 @@
 	4 5
 ```
 
-## 场景三 range在循环遍历输出chan c类型的时候 注意c为nil的时候仍然也会进行遍历输出 除非手动close掉c close(c)
+## 场景三 range在循环遍历输出chan c类型的时候 注意c为nil的时候仍然也会进行遍历输出 除非手动close掉c close(c) range缓冲队列逐个获取的方法
 
 ```golang
 	package main
