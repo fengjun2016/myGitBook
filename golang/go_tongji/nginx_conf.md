@@ -5,3 +5,5 @@
 
 > 这个模块，可以默认输出一个空白的gif，某个png透明的插件要用到这种透明的gif文件，简单看了下，配置方法很简单：
 ![Image text](https://raw.githubusercontent.com/fengjun2016/myGitBook/master/img_cut/empty_gif.png)
+我在我本地的nginx服务器实际配置为:
+![Image text](https://raw.githubusercontent.com/fengjun2016/myGitBook/master/img_cut/nginx_empty_gif.png)
