@@ -4,6 +4,4 @@
 放一张小图呢，nginx里面的空白图片是保存在内存中的，速度绝对比硬盘上读取的快. 看下如何使用empty_gif生成响应1x1的空白图片吧.或许哪天ttlsa自己要做统计，咱们也可以使用empty_gif来传递参数，说归说，肯定性还是比较小，能用第三方的统计就用第三方统计。好了，进入正题吧。nginx默认内置ngx_http_empty_gif_module模块, 如何安装nginx我不在多讲.直接看下empty_gif的用法
 
 > 这个模块，可以默认输出一个空白的gif，某个png透明的插件要用到这种透明的gif文件，简单看了下，配置方法很简单：
-location = /_.gif {
-    empty_gif;
-}
+![Image text](https://raw.githubusercontent.com/fengjun2016/myGitBook/master/img_cut/empty_gif.png)
