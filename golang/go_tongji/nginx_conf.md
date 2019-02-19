@@ -11,7 +11,7 @@
 
 > 在做打点服务器get请求的时候 发生了405 nginx NOT ALLOWED的错误
 最后修改为的配置是：
-![Image text]()
+![Image text](https://raw.githubusercontent.com/fengjun2016/myGitBook/master/img_cut/nginx_the%20last_empty_gif.png)
 
 * 借助nginx access.log记录打点请求 
 > 性能开销最小，最佳方案
