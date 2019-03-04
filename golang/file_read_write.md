@@ -38,3 +38,20 @@ fd, _ := os.OpenFile(filename, os.O_APPEND|os.O_WDWR, 0644)
 fd.Write([]byte(contents))
 defer fd.Close()
 ```
+ 
+* 方式三: 一行一行读文件 采用bufio.NewScanner()来一行一行读文件
+```golang
+//一行一行的读写文件的函数操作
+func printFile(filename string) error {
+	fd, err := os.OpenFile(filename, os.O_APPEND|os.O_RDWR, 0644)
+	if err != nil {
+		panic(err)
+	}
+
+	//创建一个scanner扫描器 一行一行读文件
+	scanner := bufio.NewScanner(fd)
+	for scanner.Scan() {
+		fmt.Println(scanner.Text())	
+	}
+}
+```
