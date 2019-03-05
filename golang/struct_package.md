@@ -177,7 +177,7 @@ func main() {
 }
 运行结果:
 1
-2
+2 
 false
 3
 true
