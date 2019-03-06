@@ -269,8 +269,31 @@ func main() {
 ```
 
 ## 几个系统常用的接口
-* String()接口 打印的时候会自动打印输出字符串
+* String()接口 使用fmt.Println()打印的时候会自动打印输出字符串
 
+### 官方文档实例代码
+```golang
+package main
+
+import "fmt"
+
+type Person struct {
+	Name string
+	Age  int
+}
+
+func (p Person) String() string {
+	return fmt.Sprintf("%v (%v years)", p.Name, p.Age)
+}
+
+func main() {
+	a := Person{"Arthur Dent", 42}
+	z := Person{"Zaphod Beeblebrox", 9001}
+	fmt.Println(a, z)
+}
+运行结果:
+Arthur Dent (42 years) Zaphod Beeblebrox (9001 years)
+```
 ```golang
 package mock
 
