@@ -38,6 +38,14 @@ fd, _ := os.OpenFile(filename, os.O_APPEND|os.O_WDWR, 0644)
 fd.Write([]byte(contents))
 defer fd.Close()
 ```
+
+```golang
+fd, _ := os.OpenFile(filename, os.O_APPEND|os.O_WDWR, 0644)
+defer fd.Close()
+writer := bufio.NewWiter(fd)
+defer writer.Flush()  //从内存导入文件
+fmt.Fprintf(writer, contents)
+```
  
 * 方式三: 一行一行读文件 采用bufio.NewScanner()来一行一行读文件
 ```golang
@@ -53,5 +61,18 @@ func printFile(filename string) error {
 	for scanner.Scan() {
 		fmt.Println(scanner.Text())	
 	}
+}
+```
+
+* 方式四: 一次性读取所有的文件内容
+```golang
+file, err := os.Open(path)
+if err != nil {
+	panic(err)
+}
+defer file.Close()
+all, err := ioutil.ReadAll(file)
+if err != nil {
+	panic(err)
 }
 ```
