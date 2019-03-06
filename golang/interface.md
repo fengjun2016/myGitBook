@@ -84,3 +84,217 @@ func main() {
 	fmt.Println(download(r))
 }
 ```
+
+## 获得接口的类型的方法
+* 方法一: switch obj{}
+```golang
+func inspect(r Retriever) {
+	fmt.Printf("%T %v\n", r, r)
+	switch v := r.(type) {
+	case mock.Retriever:
+		fmt.Println("Contents:", v.Contents)
+	case *real.Retriever:
+		fmt.Println("UserAgent:", v.UserAgent)
+	}
+}
+```
+
+* 方法二: Type assertion
+```golang
+// Type assertion
+if realRetriever, ok := r.(*real.Retriever); ok {
+	fmt.Println(realRetriever.TimeOut)
+} else {
+	fmt.Println("not a *real.Retriever")
+}
+```
+
+
+## 接口变量里面有啥？
+* 实现者的类型
+* 实现者的值(或者说是实现者的指针)
+* 接口变量同样采用值传递，几乎不需要使用接口的指针
+
+## 查看接口变量
+* 表示任何类型: interface{}
+* Type Assertion
+* Type Switch
+
+### 支持任何类型 但是里面限定int
+```golang
+package queue
+
+//定义别名 扩充已有类型的方法
+type Queue []interface{}
+
+//还有因为这里传入的是指针 所以里面访问元素的时候 需要前面加*号
+func (queue *Queue) Push(value interface{}) {
+	*queue = append(*queue, value.(int))
+}
+
+//特别注意下面的括号(*queue)[0] 不然会出现相应的报错信息出现
+func (queue *Queue) Pop() interface{} {
+	head := (*queue)[0]
+	*queue = (*queue)[1:]
+	return head.(int)
+}
+
+func (queue *Queue) IsEmpty() bool {
+	return len(*queue) == 0
+}
+```
+
+## 接口的组合
+* 注意与结构体的组合写法相区别开来才行
+* 只要实现了某个接口的方法 就算是实现了该接口 某种类型结构体可以同时实现多个接口的方法 具体怎么用则由使用情况来决定 具体看下面mock.Retrivever
+
+```golang
+package mock
+
+type Retriever struct {
+	Contents string
+}
+
+func (r *Retriever) Get(url string) string {
+	return r.Contents
+}
+
+func (r *Retriever) Post(url string, form map[string]string) string {
+	r.Contents = form["contents"]
+	return "ok"
+}
+
+```
+```golang
+package real
+
+import (
+	"net/http"
+	"net/http/httputil"
+	"time"
+)
+
+type Retriever struct {
+	UserAgent string
+	TimeOut   time.Duration
+}
+
+func (r *Retriever) Get(url string) string {
+	resp, err := http.Get(url)
+	if err != nil {
+		panic(err)
+	}
+
+	result, err := httputil.DumpResponse(resp, true)
+	resp.Body.Close()
+	if err != nil {
+		panic(err)
+	}
+
+	return string(result)
+}
+```
+
+```golang
+package main
+
+import (
+	"fmt"
+	"go_mooc/retriever/mock"
+	"go_mooc/retriever/real"
+	"time"
+)
+
+type Retriever interface {
+	Get(url string) string
+}
+
+type Poster interface {
+	Post(url string, form map[string]string) string
+}
+
+//接口的组合
+type RetrieverPoster interface {
+	Retriever
+	Poster
+}
+
+const url = "http://www.imooc.com"
+
+func Session(s RetrieverPoster) string {
+	s.Post(url, map[string]string{
+		"contents": "another a fake imooc.com",
+	})
+	return s.Get(url)
+}
+
+func download(r Retriever) string {
+	return r.Get(url)
+}
+
+func inspect(r Retriever) {
+	fmt.Printf("%T %v\n", r, r)
+	switch v := r.(type) {
+	case *mock.Retriever:
+		fmt.Println("Contents:", v.Contents)
+	case *real.Retriever:
+		fmt.Println("UserAgent:", v.UserAgent)
+	}
+}
+
+func main() {
+	var r Retriever
+	var retriever RetrieverPoster
+	retriever := &mock.Retriever{"this is a fake imooc.com"}
+	fmt.Printf("%T %v\n", retriever, retriever)
+	// inspect(r)
+
+	r = &real.Retriever{
+		UserAgent: "Mozilla/5.0",
+		TimeOut:   time.Minute,
+	}
+	inspect(r)
+
+	// Type assertion
+	if realRetriever, ok := r.(*real.Retriever); ok {
+		fmt.Println(realRetriever.TimeOut)
+	} else {
+		fmt.Println("not a *real.Retriever")
+	}
+	// fmt.Println(download(r))
+
+	fmt.Println("Try a session")
+	fmt.Println(Session(retriever))
+}
+```
+
+## 几个系统常用的接口
+* String()接口 打印的时候会自动打印输出字符串
+
+```golang
+package mock
+
+import (
+	"fmt"
+)
+
+type Retriever struct {
+	Contents string
+}
+
+func (r *Retriever) Get(url string) string {
+	return r.Contents
+}
+
+func (r *Retriever) Post(url string, form map[string]string) string {
+	r.Contents = form["contents"]
+	return "ok"
+}
+
+func (r *Retriever) String() string {
+	return fmt.Sprintf("Retriever: {Contents=%s}", r.Contents)
+}
+运行结果:
+Inspecting Retriever: {Contents=this is a fake imooc.com}
+```
+
