@@ -69,3 +69,54 @@
 
   cp php.ini-development /usr/local/etc/php/lib/php.ini
 
+
+## mac上编译安装php扩展记录
+> 总的就是进入php源码解压后的ext目录里面 然后找到你要安装的扩展，并cd进去,然后执行
+* phpize
+* ./configure --with-php-config=/usr/local/etc/php/bin/php-config (备注:有的这里还需要加其他的配置)
+* make
+* sudo make install
+* 然后使用php --ini 找到php.ini文件 在文件使用shift+g定位至文件末尾 添加extension = "扩展名.so"
+
+
+### php编译安装mbstring.so扩展 命令
+* 找到之前下载解压后的php源码扩展目录 我的是/Users/fengjun/Downloads/php-7.3.2/ext cd进入该目录
+* 然后cd mbstring
+* 执行phpize
+* 然后执行 ./configure --with-php-config=/usr/local/etc/php/bin/php-config
+* make
+* sudo make install
+* 编辑php.ini 添加extendsion="mbstring.so"
+
+### php编译安装openssl.so扩展
+* 找到之前下载解压后的php源码扩展目录 我的是/Users/fengjun/Downloads/php-7.3.2/ext cd进入该目录
+* 然后cd openssl
+* mv config0.m4 config.m4 (这一步比较特殊)
+* 执行phpize
+* 然后执行 ./configure --with-php-config=/usr/local/etc/php/bin/php-config
+> 如果只是单纯执行上面的命令会报错
+./php_openssl.h:30:10: fatal error: 'openssl/opensslv.h' file not found
+#include <openssl/opensslv.h>
+         ^~~~~~~~~~~~~~~~~~~~
+1 error generated.
+make: *** [openssl.lo] Error 1
+
+* mac上找不到这个头文件 注意只是mac上才有这个问题哦 解决办法是找你mac上openssl的安装目录 由于我是brew安装的 所以在/usr/local/opt里面可以找到
+
+* 重新执行 ./configure --with-php-config=/usr/local/etc/php/bin/php-config --with-openssl=/usr/local/opt/openssl
+
+* make
+* sudo make install
+* 编辑php.ini 添加extendsion="openssl.so"
+
+
+### php编译安装pdo_mysql扩展
+* 找到之前下载解压后的php源码扩展目录 我的是/Users/fengjun/Downloads/php-7.3.2/ext cd进入该目录
+* 然后cd pdo_mysql
+* 执行phpize
+* 然后执行 ./configure --with-php-config=/usr/local/etc/php/bin/php-config --with-pdo-mysql=/usr/local/Cellar/mysql/5.7.20 (这里是我mysql在mac上的安装目录 一定要加上这一项要求)
+* make
+* sudo make install
+* 编辑php.ini 添加extendsion="pdo_mysql.so"
+
+
