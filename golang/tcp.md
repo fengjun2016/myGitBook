@@ -87,9 +87,9 @@ func main() {
 			log.Fatal(err)
 		}
 
-		// 开一个新协程来处理连接信息
+		// 开一个新协程来处理连接信息  支持并发不同的客户端连接服务器
 		go func(conn net.Conn) {
-			for {
+			for {         // for 循环实现服务器与客户端的长连接
 				conn.Write([]byte("I'm server can you listen to me"))
 				b := make([]byte, 1024)
 				n, _ := conn.Read(b)
@@ -124,7 +124,7 @@ func main() {
 	//接收服务器信息
 	go func() {
 		buf := make([]byte, 2048)
-		for {
+		for {    // 实现客户端与服务器的长连接
 			n, err := conn.Read(buf)
 			if err != nil {
 				fmt.Println("net.read error = ", err)
@@ -138,7 +138,7 @@ func main() {
 	for {
 		str := make([]byte, 2048)
 		for {
-			n, err := os.Stdin.Read(str) //从键盘获取回复内容
+			n, err := os.Stdin.Read(str) //从键盘一直不停的获取回复内容
 			if err != nil {
 				fmt.Println("stdin error = ", err)
 				return
